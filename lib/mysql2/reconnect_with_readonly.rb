@@ -4,6 +4,8 @@ require 'mysql2/client'
 
 module Mysql2
   class ReconnectWithReadonly
+    CONNECTION_ERROR_REGEX = Regexp.union(/Lost connection/, /gone away/, /--read-only/, /Can't connect/)
+
     @reconnect_attempts  = 3
     @initial_retry_wait = 0.5
     @max_retry_wait  = nil
@@ -17,8 +19,8 @@ module Mysql2
       retries = 0
       begin
         yield block
-      rescue Mysql2::Error => e
-        if e.message =~ /read-only/
+      rescue Mysql2::Error, ActiveRecord::StatementInvalid => e
+        if e.message =~ CONNECTION_ERROR_REGEX
           if retries < reconnect_attempts
             wait = initial_retry_wait * retries
             wait = [wait, max_retry_wait].min if max_retry_wait
