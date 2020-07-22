@@ -30,7 +30,8 @@ module Mysql2
             } if logger
             sleep wait
             retries += 1
-            client.reconnect
+            #client.reconnect
+            ActiveRecord::Base.connection.reconnect!
             logger.debug { "Reconnect with readonly: disconnected and retry" } if logger
             retry
           else
