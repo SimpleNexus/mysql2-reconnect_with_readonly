@@ -4,7 +4,7 @@ require 'mysql2/client'
 
 module Mysql2
   class ReconnectWithReadonly
-    CONNECTION_ERROR_REGEX = Regexp.union(/Lost connection/, /gone away/, /--read-only/, /Can't connect/)
+    CONNECTION_ERROR_REGEX = Regexp.union(/Lost connection/, /gone away/, /--read-only/, /Can't connect/, /MySQL client is not connected/)
 
     @reconnect_attempts  = 3
     @initial_retry_wait = 0.5
